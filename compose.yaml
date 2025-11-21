@@ -1,6 +1,6 @@
 version: '3.8'
 services:
-  postgres-db:
+  knowledgehub-postgres-db:
     image: postgres:15-alpine
     container_name: knowledgehub_postgres
     environment:
@@ -13,7 +13,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
     restart: always
 
-  app:
+  knowledgehub-app:
     build: .
     container_name: knowledgehub_app
     ports:
@@ -27,5 +27,23 @@ services:
       - postgres-db
     restart: on-failure
 
+  knowledgehub- elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.10 # Используем стабильную версию
+    container_name: knowledgehub_elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    restart: always
+
 volumes:
   postgres_data:
+  elasticsearch_data:
