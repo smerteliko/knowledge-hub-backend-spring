@@ -1,0 +1,31 @@
+version: '3.8'
+services:
+  postgres-db:
+    image: postgres:15-alpine
+    container_name: knowledgehub_postgres
+    environment:
+      POSTGRES_DB: knowledgehub_db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+
+  app:
+    build: .
+    container_name: knowledgehub_app
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-db:5432/knowledgehub_db
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: password
+#      JWT_SECRET: YourSuperSecretKeyForJWT
+    depends_on:
+      - postgres-db
+    restart: on-failure
+
+volumes:
+  postgres_data:
