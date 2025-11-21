@@ -15,7 +15,6 @@ public class LinkParsingController {
 
     private final LinkParsingService linkParsingService;
 
-    // This endpoint is used by the frontend to get the preview before saving the Link Entity
     @PostMapping("/parse")
     public ResponseEntity<LinkParseResponse> parseLink(@RequestBody Map<String, String> request) {
         String url = request.get("url");

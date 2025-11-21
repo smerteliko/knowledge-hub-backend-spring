@@ -20,38 +20,35 @@ public class ContentController {
 
     private final ContentService contentService;
 
-    // --- GET, DELETE, LIST ---
-
-    // GET /api/v1/content
     @GetMapping
     public ResponseEntity<List<ContentItem>> listContent(@AuthenticationPrincipal User user) {
-        // Simplified for now, will add filtering/pagination later
         List<ContentItem> items = contentService.findAllByUserId(user.getId());
         return ResponseEntity.ok(items);
     }
 
-    // DELETE /api/v1/content/{id}
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteContent(@PathVariable UUID id, @AuthenticationPrincipal User user) {
         contentService.deleteByIdAndUser(id, user.getId());
         return ResponseEntity.noContent().build();
     }
 
-    // --- POST for Note/Link ---
 
-    // POST /api/v1/content/note
     @PostMapping("/note")
-    public ResponseEntity<ContentItem> createNote(@RequestBody NoteCreateRequest request,
-                                                  @AuthenticationPrincipal User user) {
-        // Implementation will follow
+    public ResponseEntity<ContentItem> createNote(@RequestBody NoteCreateRequest request, @AuthenticationPrincipal User user) {
+
+        if (request.getTitle() == null || request.getTitle().isBlank() || request.getContent() == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
         return ResponseEntity.ok(contentService.createNote(request, user));
     }
 
-    // POST /api/v1/content/link
     @PostMapping("/link")
-    public ResponseEntity<ContentItem> createLink(@RequestBody LinkCreateRequest request,
-                                                  @AuthenticationPrincipal User user) {
-        // Implementation will follow
+    public ResponseEntity<ContentItem> createLink(@RequestBody LinkCreateRequest request, @AuthenticationPrincipal User user) {
+        if (request.getUrl() == null || request.getUrl().isBlank()) {
+            return ResponseEntity.badRequest().build();
+        }
+
         return ResponseEntity.ok(contentService.createLink(request, user));
     }
 }

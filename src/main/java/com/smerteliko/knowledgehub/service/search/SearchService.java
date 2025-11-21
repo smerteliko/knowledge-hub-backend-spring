@@ -26,8 +26,6 @@ public class SearchService {
 
     private final ElasticsearchOperations elasticsearchOperations;
     private final ContentItemRepository contentItemRepository;
-    private final NoteSearchRepository noteSearchRepository;
-    private final LinkSearchRepository linkSearchRepository;
 
     private static final int SEARCH_LIMIT = 20;
 

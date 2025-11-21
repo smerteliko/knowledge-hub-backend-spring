@@ -24,7 +24,6 @@ public class LinkParsingService {
         }
 
         try {
-            // Jsoup connection setup
             Document doc = Jsoup.connect(url)
                 .timeout(TIMEOUT_MILLIS)
                 .userAgent("Mozilla/5.0 (compatible; KnowledgeHub/1.0; +https://knowledgehub.com)")
@@ -34,7 +33,6 @@ public class LinkParsingService {
             String description = getMetaContent(doc, "og:description");
             String imageUrl = getMetaContent(doc, "og:image");
 
-            // Fallback for title/description if OG tags are missing
             if (title.isEmpty()) {
                 title = doc.title();
             }
@@ -45,7 +43,6 @@ public class LinkParsingService {
                 }
             }
 
-            // Simple favicon heuristic
             String faviconUrl = doc.select("link[rel~=(?i)icon]").attr("href");
             if (!faviconUrl.startsWith("http") && !faviconUrl.startsWith("//")) {
                 faviconUrl = resolveRelativeUrl(url, faviconUrl);
@@ -74,7 +71,6 @@ public class LinkParsingService {
         return elements.isEmpty() ? "" : elements.attr("content");
     }
 
-    // Basic helper to resolve relative URLs (e.g., /favicon.ico)
     private String resolveRelativeUrl(String baseUrl, String relativeUrl) {
         if (relativeUrl.isEmpty()) return "";
         try {
