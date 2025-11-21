@@ -1,4 +1,4 @@
-package com.smerteliko.knowledgehub.es;
+package com.smerteliko.knowledgehub.es.entity;
 
 import com.smerteliko.knowledgehub.entity.Link;
 import lombok.Data;

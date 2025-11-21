@@ -1,4 +1,4 @@
-package com.smerteliko.knowledgehub.es;
+package com.smerteliko.knowledgehub.es.entity;
 
 import com.smerteliko.knowledgehub.entity.Note;
 import lombok.Data;
@@ -16,7 +16,7 @@ public class NoteIndex {
     @Id
     private UUID id;
 
-    @Field(type = FieldType.Long)
+    @Field(type = FieldType.Keyword)
     private UUID userId;
 
     @Field(type = FieldType.Text, name = "title"/*, boost = 2.0f*/)
