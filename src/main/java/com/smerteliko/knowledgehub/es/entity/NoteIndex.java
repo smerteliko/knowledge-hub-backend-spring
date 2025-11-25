@@ -14,9 +14,9 @@ import java.util.UUID;
 public class NoteIndex {
 
     @Id
-    private UUID id;
+    private String id;
 
-    @Field(type = FieldType.Keyword)
+    @Field(type = FieldType.Keyword, name = "userId")
     private UUID userId;
 
     @Field(type = FieldType.Text, name = "title"/*, boost = 2.0f*/)
@@ -27,7 +27,7 @@ public class NoteIndex {
 
     public static NoteIndex fromNote(Note note) {
         NoteIndex index = new NoteIndex();
-        index.setId(note.getId());
+        index.setId(note.getId().toString());
         index.setUserId(note.getUser().getId());
         index.setTitle(note.getTitle());
         index.setContent(note.getContent());
