@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -99,5 +100,14 @@ public class ContentService {
         linkSearchRepository.save(LinkIndex.fromLink(savedLink));
 
         return savedLink;
+    }
+
+    public ContentItem findByIdAndUser(UUID id, UUID userId) {
+        Optional<ContentItem> item = contentItemRepository.findById(id);
+
+        if (item.isEmpty() || !item.get().getUser().getId().equals(userId)) {
+            return null;
+        }
+        return item.get();
     }
 }

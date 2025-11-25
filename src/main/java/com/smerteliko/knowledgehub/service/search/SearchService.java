@@ -2,22 +2,21 @@ package com.smerteliko.knowledgehub.service.search;
 
 import com.smerteliko.knowledgehub.es.entity.LinkIndex;
 import com.smerteliko.knowledgehub.es.entity.NoteIndex;
-import com.smerteliko.knowledgehub.es.repository.LinkSearchRepository;
-import com.smerteliko.knowledgehub.es.repository.NoteSearchRepository;
 import com.smerteliko.knowledgehub.entity.ContentItem;
 import com.smerteliko.knowledgehub.repository.ContentItemRepository;
 import lombok.RequiredArgsConstructor;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.elasticsearch.client.elc.NativeQuery;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.SearchHits;
-import org.springframework.data.elasticsearch.client.elc.NativeQuery;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import co.elastic.clients.elasticsearch._types.query_dsl.*;
 
-import org.springframework.data.elasticsearch.core.query.Query;
+
 import org.springframework.stereotype.Service;
 
 @Service
@@ -28,6 +27,8 @@ public class SearchService {
     private final ContentItemRepository contentItemRepository;
 
     private static final int SEARCH_LIMIT = 20;
+
+
 
     /**
      * Performs a full-text search across Note and Link indices for the given user.
@@ -58,34 +59,26 @@ public class SearchService {
      * Generic method to perform search on a specific index (Note or Link).
      */
     private <T> List<UUID> searchIndex(String query, UUID userId, Class<T> indexClass) {
+        Query esQuery = BoolQuery.of(b -> b
+            .must(m -> m.term(t -> t
+                .field("userId")
+                .value(userId.toString())
+            ))
+            .must(m -> m.multiMatch(mm -> mm
+                .fields("title^2.0", "content", "description")
+                .query(query)
+            ))
+        )._toQuery();
 
-        // Match user's content AND the search query (filtered query)
-        Query queryBuilder = NativeQuery.builder()
-            .withQuery(q -> q
-                .bool(b -> b
-                    // 1. Match the user ID (mandatory filter)
-                    .must(m -> m
-                        .term(t -> t
-                            .field("userId")
-                            .value(userId.toString())
-                        )
-                    )
-                    // 2. Match the query text in title/content/description fields
-                    .must(m -> m
-                        .multiMatch(mm -> mm
-                            .query(query)
-                            .fields("title^2.0", "content", "description") // Boost title with ^2.0
-                        )
-                    )
-                )
-            )
+        NativeQuery searchQuery = NativeQuery.builder()
+            .withQuery(esQuery)
             .withPageable(PageRequest.of(0, SEARCH_LIMIT))
             .build();
 
-        SearchHits<T> searchHits = elasticsearchOperations.search(queryBuilder, indexClass);
+        SearchHits<T> searchHits = elasticsearchOperations.search(searchQuery, indexClass);
 
         return searchHits.stream()
             .map(hit -> UUID.fromString(hit.getId()))
             .collect(Collectors.toList());
-    }
+        }
 }

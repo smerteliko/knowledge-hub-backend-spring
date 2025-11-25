@@ -14,9 +14,9 @@ import java.util.UUID;
 public class LinkIndex {
 
     @Id
-    private UUID id;
+    private String id;
 
-    @Field(type = FieldType.Long)
+    @Field(type = FieldType.Keyword, name = "userId")
     private UUID userId;
 
     @Field(type = FieldType.Text, name = "title"/*, boost = 2.0f*/)
@@ -30,7 +30,7 @@ public class LinkIndex {
 
     public static LinkIndex fromLink(Link link) {
         LinkIndex index = new LinkIndex();
-        index.setId(link.getId());
+        index.setId(link.getId().toString());
         index.setUserId(link.getUser().getId());
         index.setTitle(link.getTitle());
         index.setDescription(link.getDescription());
