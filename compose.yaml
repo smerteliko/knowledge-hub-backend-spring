@@ -27,7 +27,7 @@ services:
       - knowledgehub-postgres-db
     restart: on-failure
 
-  knowledgehub- elasticsearch:
+  knowledgehub-elasticsearch:
     image: elasticsearch:7.17.10
     container_name: knowledgehub_elasticsearch
     environment:
