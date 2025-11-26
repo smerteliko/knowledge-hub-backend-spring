@@ -1,6 +1,7 @@
 package com.smerteliko.knowledgehub.config;
 
 import com.smerteliko.knowledgehub.repository.UserRepository;
+import com.smerteliko.knowledgehub.service.security.JpaUserDetailsService;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -34,12 +35,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final UserRepository userRepository;
+    private final JpaUserDetailsService jpaUserDetailsService;
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return username -> userRepository.findByEmail(username)
-            .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + username));
+        return jpaUserDetailsService;
     }
 
     @Bean

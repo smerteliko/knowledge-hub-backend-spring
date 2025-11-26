@@ -36,7 +36,7 @@ public class AuthService {
         userRepository.save(user);
 
         var jwtToken = jwtService.generateToken(user);
-        return new JwtResponse(jwtToken, user.getUsername(), user.getId());
+        return new JwtResponse(jwtToken, user.getUsernameField(), user.getEmail(), user.getId());
     }
 
     public JwtResponse login(LoginRequest request) {
@@ -51,6 +51,6 @@ public class AuthService {
             .orElseThrow(() -> new RuntimeException("User not found after successful authentication."));
 
         var jwtToken = jwtService.generateToken(user);
-        return new JwtResponse(jwtToken, user.getUsername(), user.getId());
+        return new JwtResponse(jwtToken, user.getUsernameField(), user.getEmail(), user.getId());
     }
 }

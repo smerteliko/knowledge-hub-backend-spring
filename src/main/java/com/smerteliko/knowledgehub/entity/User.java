@@ -61,10 +61,17 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-    
+
     @Override
     public String getUsername() {
-        
-        return this.email; 
+        return this.email;
+    }
+
+    public String getUsernameField(){
+        return this.username;
+    }
+
+    public String getEmail() {
+        return this.email;
     }
 }
