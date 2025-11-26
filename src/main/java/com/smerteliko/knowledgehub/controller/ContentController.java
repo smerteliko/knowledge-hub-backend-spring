@@ -12,6 +12,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
+
 
 import java.io.IOException;
 import java.util.List;
@@ -48,6 +50,14 @@ public class ContentController {
         return ResponseEntity.ok(contentService.createNote(request, user));
     }
 
+    @PutMapping("/note/{id}")
+    public ResponseEntity<ContentItem> updateNote(@PathVariable UUID id,
+                                                  @Valid @RequestBody NoteCreateRequest request,
+                                                  @AuthenticationPrincipal User user) {
+        ContentItem updatedItem = contentService.updateNote(id, request, user);
+        return ResponseEntity.ok(updatedItem);
+    }
+
     @PostMapping("/link")
     public ResponseEntity<ContentItem> createLink(@RequestBody LinkCreateRequest request, @AuthenticationPrincipal User user) {
         if (request.getUrl() == null || request.getUrl().isBlank()) {
@@ -55,6 +65,14 @@ public class ContentController {
         }
 
         return ResponseEntity.ok(contentService.createLink(request, user));
+    }
+
+    @PutMapping("/link/{id}")
+    public ResponseEntity<ContentItem> updateLink(@PathVariable UUID id,
+                                                  @Valid @RequestBody LinkCreateRequest request,
+                                                  @AuthenticationPrincipal User user) {
+        ContentItem updatedItem = contentService.updateLink(id, request, user);
+        return ResponseEntity.ok(updatedItem);
     }
 
     @GetMapping("/{id}/export")
