@@ -2,6 +2,7 @@ package com.smerteliko.knowledgehub.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -39,10 +40,19 @@ public abstract class ContentItem {
     private User user;
 
     @ManyToMany(fetch = FetchType.EAGER)
+    @EqualsAndHashCode.Exclude
     @JoinTable(
         name = "content_item_tags",
         joinColumns = @JoinColumn(name = "content_item_id"),
         inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
     private Set<Tag> tags = new HashSet<>();
+
+    public void setTags(Set<Tag> newTags) {
+        this.tags.clear();
+        if (newTags != null) {
+            this.tags.addAll(newTags);
+        }
+    }
 }
+

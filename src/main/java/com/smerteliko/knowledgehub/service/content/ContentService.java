@@ -14,6 +14,7 @@ import com.smerteliko.knowledgehub.es.repository.NoteSearchRepository;
 import com.smerteliko.knowledgehub.repository.ContentItemRepository;
 import com.smerteliko.knowledgehub.service.parse.LinkParsingService;
 import com.smerteliko.knowledgehub.service.tag.TagService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -109,5 +110,45 @@ public class ContentService {
             return null;
         }
         return item.get();
+    }
+
+    public ContentItem updateNote(UUID id, NoteCreateRequest request, User user) {
+        Note note = (Note) contentItemRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("Note not found with ID: " + id));
+        if (!note.getUser().getId().equals(user.getId())) {
+            throw new SecurityException("Access denied: User does not own this note.");
+        }
+
+        note.setTitle(request.getTitle());
+        note.setContent(request.getContent());
+
+        note.setTags(tagService.findTagsByIds(request.getTagIds()));
+
+        Note updatedNote = contentItemRepository.save(note);
+
+        noteSearchRepository.save(NoteIndex.fromNote(updatedNote));
+
+        return updatedNote;
+    }
+
+    public ContentItem updateLink(UUID id, LinkCreateRequest request, User user) {
+        Link link = (Link) contentItemRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("Link not found with ID: " + id));
+
+        if (!link.getUser().getId().equals(user.getId())) {
+            throw new SecurityException("Access denied: User does not own this link.");
+        }
+
+        link.setTitle(request.getTitle());
+        link.setDescription(request.getDescription());
+        link.setImageUrl(request.getImageUrl());
+
+        link.setTags(tagService.findTagsByIds(request.getTagIds()));
+
+        Link updatedLink = contentItemRepository.save(link);
+
+        linkSearchRepository.save(LinkIndex.fromLink(updatedLink));
+
+        return updatedLink;
     }
 }

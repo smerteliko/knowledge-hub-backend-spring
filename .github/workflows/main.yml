@@ -10,7 +10,7 @@ jobs:
 
     services:
       elasticsearch:
-        image: docker.elastic.co/elasticsearch/elasticsearch:7.17.10
+        image: elasticsearch:7.17.10
         ports:
           - 9200:9200
         options: >
@@ -36,5 +36,5 @@ jobs:
       - name: Build and Run Tests
         run: mvn clean install -DskipTests=false
         env:
-          SPRING_DATA_ELASTICSEARCH_CLIENT_REST_URIS: http://localhost:9200
+          SPRING_ELASTICSEARCH_URIS: http://localhost:9200
 

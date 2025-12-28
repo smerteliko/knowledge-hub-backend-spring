@@ -19,12 +19,11 @@ public class ElasticsearchConfig extends ElasticsearchConfiguration {
     @Value("${spring.elasticsearch.uris:localhost:9200}")
     private String elasticsearchUrl;
 
-    @Override
     public ClientConfiguration clientConfiguration() {
         return ClientConfiguration.builder()
             .connectedTo(elasticsearchUrl)
-            .withConnectTimeout(10000)
-            .withSocketTimeout(30000)
+            .withConnectTimeout(30000)
+            .withSocketTimeout(60000)
             .build();
     }
 }

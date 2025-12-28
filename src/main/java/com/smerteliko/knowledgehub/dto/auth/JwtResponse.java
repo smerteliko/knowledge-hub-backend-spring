@@ -12,5 +12,6 @@ import java.util.UUID;
 public class JwtResponse {
     private String token;
     private String username;
+    private String email;
     private UUID userId;
 }
